@@ -122,6 +122,6 @@ Starts capturing images
 wincap.generate_image_dataset()
 ```
 ---
-##Note:
+## Note:
   - You can modify the delay parameter in the generate_image_dataset function to control the interval between each screenshot.
   - Example: delay = 2 #screenshot every 2 seconds.
