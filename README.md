@@ -61,60 +61,60 @@ class WindowCapture:
 ## 3. Define the Screenshot Function
 This function captures a screenshot from the specified window.
 ```python
-def get_screenshot(self):
-    # Get the device context (DC) of the window
-    wDC = win32gui.GetWindowDC(self.hwnd)
-    dcObj = win32ui.CreateDCFromHandle(wDC)
-    cDC = dcObj.CreateCompatibleDC()
-    dataBitMap = win32ui.CreateBitmap()
-    dataBitMap.CreateCompatibleBitmap(dcObj, self.w, self.h)
-    cDC.SelectObject(dataBitMap)
+    def get_screenshot(self):
+        # Get the device context (DC) of the window
+        wDC = win32gui.GetWindowDC(self.hwnd)
+        dcObj = win32ui.CreateDCFromHandle(wDC)
+        cDC = dcObj.CreateCompatibleDC()
+        dataBitMap = win32ui.CreateBitmap()
+        dataBitMap.CreateCompatibleBitmap(dcObj, self.w, self.h)
+        cDC.SelectObject(dataBitMap)
 
-    # Copy the window image to the bitmap
-    cDC.BitBlt((0, 0), (self.w, self.h), dcObj, (self.cropped_x, self.cropped_y), win32con.SRCCOPY)
+        # Copy the window image to the bitmap
+        cDC.BitBlt((0, 0), (self.w, self.h), dcObj, (self.cropped_x, self.cropped_y), win32con.SRCCOPY)
 
-    # Save the screenshot in memory
-    signedIntsArray = dataBitMap.GetBitmapBits(True)
-    img = np.frombuffer(signedIntsArray, dtype='uint8')
-    img.shape = (self.h, self.w, 4)
+        # Save the screenshot in memory
+        signedIntsArray = dataBitMap.GetBitmapBits(True)
+        img = np.frombuffer(signedIntsArray, dtype='uint8')
+        img.shape = (self.h, self.w, 4)
 
-    # Free resources
-    dcObj.DeleteDC()
-    cDC.DeleteDC()
-    win32gui.ReleaseDC(self.hwnd, wDC)
-    win32gui.DeleteObject(dataBitMap.GetHandle())
+        # Free resources
+        dcObj.DeleteDC()
+        cDC.DeleteDC()
+        win32gui.ReleaseDC(self.hwnd, wDC)
+        win32gui.DeleteObject(dataBitMap.GetHandle())
 
-    # Return the image as a PIL Image object
-    img = Image.fromarray(img)
-    return img
+        # Convert BGR to RGB and return the image as a numpy array
+        img = img[..., :3]
+        img = np.ascontiguousarray(img)
+
+        return img
 ```
 ## 4. Define the Function to Generate the Dataset
 This function captures a specified number of images from the window as well as intervals and saves them into a folder.
 ```python
-def generate_image_dataset(self, num_images=100, delay=1):
-    # Counter to track the number of images saved
-    img_counter = 0
+def generate_image_dataset(self):
+        # Create 'images' folder if it does not exist
+        if not os.path.exists("images"):
+            os.mkdir("images")
+        img_counter = len(os.listdir("images"))
+        while True:
+            img = self.get_screenshot()
+            img_path = f"./images/img_{img_counter}.jpg"
+            im = Image.fromarray(img[..., [2, 1, 0]])  # Convert BGR to RGB
+            im.save(img_path)
 
-    # Create 'images' folder if it does not exist
-    if not os.path.exists('images'):
-        os.makedirs('images')
+            # Print the image number and location to the terminal
+            print(f"Saved: {img_path}")
 
-    # Capture and save images until reaching the specified number
-    while img_counter < num_images:
-        img = self.get_screenshot()
-        img.save(f'./images/img_{img_counter}.jpg')
-        print(f'Saved: ./images/img_{img_counter}.jpg')
-        img_counter += 1
-
-        # Wait for the specified delay before capturing the next screenshot
-        sleep(delay)  # You can change the delay value HERE to adjust the interval between screenshots
+            img_counter += 1
+            sleep(1)  # Set delay between screenshots (seconds)
 ```
 ## 5. Update the window_name Variable
 Replace the window_name with the title of the window you want to capture.
 ```python
-window_name = "Window That You Want"  # Replace this with the window title
+window_name = "WindowNameHere"  # Replace this with the window title
 wincap = WindowCapture(window_name)
-wincap.generate_image_dataset(num_images=100, delay=2)  # Adjust 'delay' for interval between screenshots
 ```
 ## 6. Run the Dataset Generation
 Starts capturing images
@@ -123,5 +123,5 @@ wincap.generate_image_dataset()
 ```
 ---
 ## Note:
-  - You can modify the delay parameter in the generate_image_dataset function to control the interval between each screenshot.
-  - Example: delay = 2 #screenshot every 2 seconds.
+  - You can modify the delay parameter in the generate_image_dataset function to control the interval between each screenshot. (Step)
+  - Example: sleep = 2 (Screenshot every 2 seconds).
