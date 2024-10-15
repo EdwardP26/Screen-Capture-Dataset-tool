@@ -14,13 +14,20 @@ The tool works by taking continuous screenshots from the specified window and sa
 ---
 ## Setup Instructions
 
-1. **Open the Application or Window** you want to capture.
-2. **Get the Window Title Name**:
-    - Open the application and note the title from the window's title bar.
-    - Alternatively, you can use Task Manager (press Ctrl + Shift + Esc) to find the window title. In Task Manager, find the application under the Processes tab, and note its name.
-    - Replace the `window_name` variable in the code with the title of the desired window.
-3. **Run the Code** to start capturing images.
-    - Run the following command in your terminal to install the necessary libraries: pip install numpy pywin32 pillow.
+1. **Create a New Folder** for the project to keep everything organized.
+   - It's important not to run the script on the desktop or in a random location because it creates a new folder called `images`.
+2. **Place the `.py` File in the New Folder**.
+3. **Open the Application or Window** you want to capture.
+4. **Get the Window Title Name**:
+   - Open the application and note the title from the window's title bar.
+   - Alternatively, you can use Task Manager (press `Ctrl + Shift + Esc`) to find the window title. In Task Manager, find the application under the **Processes** tab, and note its name.
+   - Replace the `window_name` variable in the code with the title of the desired window.
+5. **Install Necessary Libraries**:
+   - Run the following command in your terminal to install the required libraries:
+     ```
+     pip install numpy pywin32 pillow
+     ```
+6. **Run the Code** to start capturing images.
 ---
 ## 1. Import Necessary Libraries
 Make sure to do: pip install numpy pywin32 pillow
